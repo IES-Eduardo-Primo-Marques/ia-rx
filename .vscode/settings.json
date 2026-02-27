@@ -15,8 +15,25 @@
     // Nota: Esto teñirá sutilmente el marco superior y los bordes al color del logo/institución
     // y ayudará al equipo a saber instantáneamente qué proyecto tienen abierto.
     "workbench.colorCustomizations": {
-        "activityBar.activeBorder": "#4DB6AC"
+        "activityBar.activeBackground": "#040fb9",
+        "activityBar.background": "#040fb9",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#da0512",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "commandCenter.border": "#e7e7e799",
+        "sash.hoverBorder": "#030b87",
+        "statusBar.background": "#030b87",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#040fb9",
+        "statusBarItem.remoteBackground": "#030b87",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#030b87",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#030b8799",
+        "titleBar.inactiveForeground": "#e7e7e799"
     },
+    "peacock.color": "#030B87",
     // Iconos por defecto y ajustes varios de fluidez
     "workbench.tree.indent": 16,
     "workbench.tree.renderIndentGuides": "always",
