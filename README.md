@@ -1,3 +1,12 @@
+```text
+  ___    _            ____ __  __
+ |_ _|  / \          |  _ \\ \/ /
+  | |  / _ \   ____  | |_) |\  / 
+  | | / ___ \ |____| |  _ < /  \ 
+ |___/_/   \_\       |_| \_/_/\_\
+
+```
+
 El proyecto IA-RX es una iniciativa de innovación educativa que aplica inteligencia artificial y Big Data al posicionamiento radiográfico, integrando formación sanitaria y competencias digitales en FP, con desarrollo de modelos de IA, dataset radiográfico etiquetado y una aplicación web funcional con impacto social en entornos de salud.
 
 ## Idea global del proyecto
