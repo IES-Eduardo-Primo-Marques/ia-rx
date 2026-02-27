@@ -1,0 +1,26 @@
+{
+    // ===============================================
+    // IA-RX - Workspace Aesthetics & UI Settings
+    // ===============================================
+    // 1. Tipografía moderna para desarrolladores
+    "editor.fontFamily": "'Fira Code', 'JetBrains Mono', Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 14,
+    "editor.lineHeight": 1.5,
+    "editor.cursorBlinking": "smooth",
+    "editor.cursorSmoothCaretAnimation": "on",
+    // 2. Comportamiento visual de la ventana
+    "window.title": "${dirty}${activeEditorShort} - IA-RX Project",
+    // 3. Colores corporativos del proyecto (Tematización de Carpetas y Ventanas)
+    // Nota: Esto teñirá sutilmente el marco superior y los bordes al color del logo/institución
+    // y ayudará al equipo a saber instantáneamente qué proyecto tienen abierto.
+    "workbench.colorCustomizations": {
+        "activityBar.activeBorder": "#4DB6AC"
+    },
+    // Iconos por defecto y ajustes varios de fluidez
+    "workbench.tree.indent": 16,
+    "workbench.tree.renderIndentGuides": "always",
+    "workbench.editor.labelFormat": "short",
+    // Terminal
+    "terminal.integrated.fontFamily": "'MesloLGS NF', 'Fira Code', monospace"
+}
