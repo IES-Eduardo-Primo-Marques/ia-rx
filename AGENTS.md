@@ -47,6 +47,16 @@ El proyecto incluye *Skills* preconfigurados en el directorio `.agents/skills/`.
 - **Descripción:** Implementa patrones de uso avanzado de la CLI de GitHub (`gh`). Soporta PRs apilados, estrategias de ramas y automatizaciones del repositorio.
 - **Referencia IA:** Analiza y sigue las instrucciones de `.agents/skills/github/SKILL.md`.
 
+### 🚀 `astro` & `astro-framework`
+- **Cuándo usar:** Al desarrollar, refactorizar o configurar el frontend basado en Astro (`src/frontend-astro`).
+- **Descripción:** Proporcionan conocimiento exhaustivo sobre *Islands Architecture*, hidratación selectiva, Server-Side Rendering (SSR), View Transitions, integraciones de frameworks UI (React/Vue) y el uso general de la CLI de Astro.
+- **Referencia IA:** Analiza y sigue `.agents/skills/astro/SKILL.md` y `.agents/skills/astro-framework/SKILL.md`.
+
+### 🐍 `python-code-style` & `python-performance-optimization`
+- **Cuándo usar:** Al escribir scripts de preprocesamiento de datos (`src/data`), entrenar modelos (`src/models`) u optimizar algoritmos y APIs (`src/api`).
+- **Descripción:** Establecen reglas estrictas sobre el estilo de código en Python (linting, docstrings, convenciones) así como sugerencias activas para perfiles de rendimiento, optimización de algoritmos lentos (cProfile, profilers de memoria) y mejores prácticas de procesamiento asíncrono.
+- **Referencia IA:** Analiza y sigue `.agents/skills/python-code-style/SKILL.md` y `.agents/skills/python-performance-optimization/SKILL.md`.
+
 ---
 
 ## 🔄 4. Flujo de Trabajo y Automatización
