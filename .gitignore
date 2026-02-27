@@ -48,6 +48,7 @@ $RECYCLE.BIN/
 
 # VSCode
 .vscode/
+!.vscode/settings.json
 *.code-workspace
 
 # JetBrains / PyCharm
