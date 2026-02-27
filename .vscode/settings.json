@@ -22,7 +22,7 @@
         "activityBarBadge.background": "#da0512",
         "activityBarBadge.foreground": "#e7e7e7",
         "commandCenter.border": "#e7e7e799",
-        "sash.hoverBorder": "#030b87",
+        "sash.hoverBorder": "#040fb9",
         "statusBar.background": "#030b87",
         "statusBar.foreground": "#e7e7e7",
         "statusBarItem.hoverBackground": "#040fb9",

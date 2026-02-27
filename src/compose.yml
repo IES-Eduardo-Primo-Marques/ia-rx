@@ -1,0 +1,23 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/app
+    environment:
+      - ENVIRONMENT=development
+
+  frontend:
+    build:
+      context: ./frontend-astro
+      dockerfile: Dockerfile
+    ports:
+      - "4321:4321"
+    volumes:
+      - ./frontend-astro:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
