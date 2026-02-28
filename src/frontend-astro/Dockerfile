@@ -3,8 +3,8 @@ FROM node:20-slim
 WORKDIR /app
 
 # Uncomment and copy package files when ready
-# COPY package*.json ./
-# RUN npm install
+COPY package*.json ./
+RUN npm install
 
 COPY . .
 
