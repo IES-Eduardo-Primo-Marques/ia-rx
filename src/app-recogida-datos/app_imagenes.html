@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Trainer Pro - Seguro con Rotación</title>
+    <style>
+        :root { --primary: #2563eb; --si: #16a34a; --no: #dc2626; --dark: #1e293b; --warning: #f59e0b; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f1f5f9; margin: 0; padding-bottom: 50px; }
+        header { background: var(--dark); color: white; padding: 1rem; text-align: center; }
+
+        .container { max-width: 900px; margin: 20px auto; display: grid; grid-template-columns: 1fr 350px; gap: 20px; padding: 0 20px; }
+        
+        .main-panel { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        
+        /* Contenedor para que el video rotado no rompa el diseño */
+        .video-box { 
+            width: 100%; 
+            height: 400px; 
+            background: #000; 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            margin: 10px 0;
+        }
+        
+        video { 
+            max-width: 100%; 
+            max-height: 100%; 
+            transition: transform 0.3s ease; 
+            transform: scaleX(-1); /* Espejo inicial */
+        }
+        
+        .config-panel { background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .cat-item { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; padding: 8px; background: #f8fafc; border-radius: 6px; }
+        .cat-item input { flex-grow: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem; }
+        
+        button { cursor: pointer; border-radius: 6px; border: none; font-weight: bold; transition: 0.2s; }
+        .btn-main { width: 100%; padding: 15px; background: var(--primary); color: white; margin-top: 15px; font-size: 1.1rem; }
+        .btn-rotate { background: #475569; color: white; padding: 10px; width: 100%; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-add { background: #e2e8f0; padding: 10px; width: 100%; margin-top: 10px; color: var(--dark); }
+        
+        .btn-lock { background: #cbd5e1; color: #475569; padding: 8px; font-size: 1.2rem; }
+        .btn-del { background: #fee2e2; color: #ef4444; padding: 8px 12px; display: none; }
+
+        #modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 15px; text-align: center; max-width: 500px; width: 90%; }
+        canvas { max-width: 100%; border-radius: 10px; margin-bottom: 15px; }
+        .modal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-si { background: var(--si); color: white; padding: 15px; }
+        .btn-no { background: var(--no); color: white; padding: 15px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Entrenamiento IA: Captura Segura</h1>
+    <button id="btn-dir" style="background: var(--warning); color: black; padding: 10px 20px; margin-top: 10px;">
+        📁 1. Vincular Carpeta de Trabajo
+    </button>
+</header>
+
+<div class="container">
+    <div class="main-panel">
+        <label>Objetivo de captura:</label>
+        <select id="body-part-select" style="width:100%; padding: 12px; margin: 10px 0; font-size: 1.1rem; border-radius: 8px; border: 2px solid var(--primary);"></select>
+        
+        <div class="video-box">
+            <video id="video" autoplay playsinline></video>
+        </div>
+        
+        <button id="btn-snap" class="btn-main">📸 CAPTURAR IMAGEN</button>
+    </div>
+
+    <div class="config-panel">
+        <button class="btn-rotate" id="btn-rotate">🔄 Girar Perspectiva 90°</button>
+        
+        <h3>Gestión de Categorías</h3>
+        <p style="font-size: 0.8rem; color: #64748b;">Pulsa 🔒 para habilitar el borrado.</p>
+        <div id="categories-list"></div>
+        <button class="btn-add" onclick="addCategory()">+ Añadir Nueva</button>
+    </div>
+</div>
+
+<div id="modal">
+    <div class="modal-content">
+        <h2 id="modal-title">¿La imagen es válida?</h2>
+        <canvas id="preview-canvas"></canvas>
+        <div class="modal-btns">
+            <button class="btn-si" onclick="saveToFolder('si')">SÍ (Correcta)</button>
+            <button class="btn-no" onclick="saveToFolder('no')">NO (Incorrecta)</button>
+        </div>
+        <button onclick="closeModal()" style="margin-top:15px; background:none; color: gray; text-decoration: underline;">Descartar</button>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('preview-canvas');
+    const partSelect = document.getElementById('body-part-select');
+    const catListDiv = document.getElementById('categories-list');
+    const modal = document.getElementById('modal');
+    const rotateBtn = document.getElementById('btn-rotate');
+
+    let rootHandle;
+    let currentBlob;
+    let rotation = 0;
+    
+    let categories = JSON.parse(localStorage.getItem('ia_categories')) || ["dedo", "mano", "muneca"];
+
+    navigator.mediaDevices.getUserMedia({ video: true }).then(s => video.srcObject = s);
+
+    // Lógica para girar el video visualmente
+    rotateBtn.addEventListener('click', () => {
+        rotation = (rotation + 90) % 360;
+        // Mantenemos el scaleX(-1) para el efecto espejo y añadimos el rotate
+        video.style.transform = `scaleX(-1) rotate(${rotation}deg)`;
+        
+        // Ajuste de escala para que no se corte al estar en 90 o 270 grados
+        video.style.scale = (rotation === 90 || rotation === 270) ? "0.7" : "1";
+    });
+
+    function renderCategories() {
+        catListDiv.innerHTML = "";
+        partSelect.innerHTML = "";
+        localStorage.setItem('ia_categories', JSON.stringify(categories));
+
+        categories.forEach((cat, index) => {
+            const div = document.createElement('div');
+            div.className = 'cat-item';
+            div.innerHTML = `
+                <input type="text" value="${cat}" onchange="updateCategory(${index}, this.value)">
+                <button class="btn-lock" onclick="unlockDelete(this)">🔒</button>
+                <button class="btn-del" onclick="confirmDelete(${index})">Eliminar</button>
+            `;
+            catListDiv.appendChild(div);
+
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.innerText = cat.toUpperCase();
+            partSelect.appendChild(opt);
+        });
+    }
+
+    function unlockDelete(btn) {
+        const delBtn = btn.nextElementSibling;
+        if (delBtn.style.display === 'block') {
+            delBtn.style.display = 'none';
+            btn.innerText = "🔒";
+        } else {
+            delBtn.style.display = 'block';
+            btn.innerText = "🔓";
+        }
+    }
+
+    function confirmDelete(index) {
+        if (confirm(`¿Estás SEGURO de eliminar la categoría "${categories[index]}"?`)) {
+            categories.splice(index, 1);
+            renderCategories();
+        }
+    }
+
+    function addCategory() {
+        categories.push("nueva_parte");
+        renderCategories();
+    }
+
+    function updateCategory(index, value) {
+        categories[index] = value.toLowerCase().trim().replace(/\s+/g, '_');
+        renderCategories();
+    }
+
+    document.getElementById('btn-dir').addEventListener('click', async () => {
+        try {
+            rootHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+            document.getElementById('btn-dir').innerText = "✅ Conectado: " + rootHandle.name;
+            document.getElementById('btn-dir').style.background = "#16a34a";
+        } catch (e) {}
+    });
+
+    document.getElementById('btn-snap').addEventListener('click', () => {
+        if (!rootHandle) return alert("Error: Selecciona la carpeta de destino arriba.");
+        
+        const ctx = canvas.getContext('2d');
+        const vW = video.videoWidth;
+        const vH = video.videoHeight;
+
+        // Ajustar tamaño del canvas según rotación
+        if (rotation === 90 || rotation === 270) {
+            canvas.width = vH;
+            canvas.height = vW;
+        } else {
+            canvas.width = vW;
+            canvas.height = vH;
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        
+        // Mover al centro del canvas
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        
+        // Aplicar rotación y espejo
+        ctx.rotate((rotation * Math.PI) / 180);
+        ctx.scale(-1, 1); // Efecto espejo
+        
+        // Dibujar video centrado
+        ctx.drawImage(video, -vW / 2, -vH / 2, vW, vH);
+        
+        ctx.restore();
+        
+        canvas.toBlob(blob => {
+            currentBlob = blob;
+            modal.style.display = 'flex';
+        }, 'image/png');
+    });
+
+    async function saveToFolder(sub) {
+        const cat = partSelect.value;
+        try {
+            const catDir = await rootHandle.getDirectoryHandle(cat, { create: true });
+            const finalDir = await catDir.getDirectoryHandle(sub, { create: true });
+            const fileHandle = await finalDir.getFileHandle(`img_${Date.now()}.png`, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(currentBlob);
+            await writable.close();
+            closeModal();
+        } catch (err) { alert("Error de acceso al disco: " + err); }
+    }
+
+    function closeModal() { modal.style.display = 'none'; }
+
+    renderCategories();
+</script>
+</body>
+</html>
